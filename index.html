@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A fun 2D top-down football game built with HTML5 Canvas. Control your player, score goals, and beat the AI opponent!">
+  <title>Football Game — 2D Top-Down Soccer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- HUD: Scoreboard + Timer -->
+  <div id="hud">
+    <div id="score-left">
+      <span class="team-label">YOU</span>
+      <span id="player-score" class="score-value">0</span>
+    </div>
+    <div id="timer-container">
+      <span id="timer">1:00</span>
+    </div>
+    <div id="score-right">
+      <span id="opponent-score" class="score-value">0</span>
+      <span class="team-label">CPU</span>
+    </div>
+  </div>
+
+  <!-- Canvas -->
+  <canvas id="game-canvas"></canvas>
+
+  <!-- Start Screen Overlay -->
+  <div id="start-screen" class="overlay">
+    <div class="overlay-content">
+      <h1>⚽ Football Game</h1>
+      <p>Score more goals than the CPU in 60 seconds!</p>
+      <div class="controls-info">
+        <span>🎮 <strong>WASD</strong> or <strong>Arrow Keys</strong> to move</span>
+      </div>
+      <button id="start-btn">Start Game</button>
+    </div>
+  </div>
+
+  <!-- Game Over Overlay -->
+  <div id="gameover-screen" class="overlay hidden">
+    <div class="overlay-content">
+      <h1 id="result-title">Game Over</h1>
+      <p id="result-text">Final Score: 0 - 0</p>
+      <button id="restart-btn">Play Again</button>
+    </div>
+  </div>
+
+  <!-- Goal Flash -->
+  <div id="goal-flash" class="hidden">GOAL!</div>
+
+  <script src="game.js"></script>
+</body>
+</html>
