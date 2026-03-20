@@ -68,22 +68,55 @@ window.addEventListener('keydown', (e) => {
 });
 window.addEventListener('keyup', (e) => { keys[e.key] = false; });
 
-// Touch Controls
-let touchActive = false;
-let touchX = 0, touchY = 0;
+// Virtual Joystick Controls
+const joystickZone = document.getElementById('joystick-zone');
+const joystickStick = document.getElementById('joystick-stick');
+let joyActive = false;
+let joyCenter = { x: 0, y: 0 };
+let joyVector = { x: 0, y: 0 };
 
-canvas.addEventListener('pointerdown', handlePointer);
-canvas.addEventListener('pointermove', (e) => { if (touchActive) handlePointer(e); });
-canvas.addEventListener('pointerup', () => touchActive = false);
-canvas.addEventListener('pointercancel', () => touchActive = false);
+joystickZone.addEventListener('pointerdown', startJoy);
+joystickZone.addEventListener('pointermove', moveJoy);
+window.addEventListener('pointerup', endJoy);
+window.addEventListener('pointercancel', endJoy);
 
-function handlePointer(e) {
-  touchActive = true;
-  const rect = canvas.getBoundingClientRect();
-  const scaleX = canvas.width / rect.width;
-  const scaleY = canvas.height / rect.height;
-  touchX = (e.clientX - rect.left) * scaleX;
-  touchY = (e.clientY - rect.top) * scaleY;
+function startJoy(e) {
+  joyActive = true;
+  joystickStick.style.transition = 'none';
+  const rect = joystickZone.getBoundingClientRect();
+  joyCenter = {
+    x: rect.left + rect.width / 2,
+    y: rect.top + rect.height / 2
+  };
+  moveJoy(e);
+}
+
+function moveJoy(e) {
+  if (!joyActive) return;
+  
+  let dx = e.clientX - joyCenter.x;
+  let dy = e.clientY - joyCenter.y;
+  
+  const maxRadius = 40;
+  const dist = Math.hypot(dx, dy);
+  
+  if (dist > maxRadius) {
+    dx = (dx / dist) * maxRadius;
+    dy = (dy / dist) * maxRadius;
+  }
+  
+  joystickStick.style.transform = `translate(${dx}px, ${dy}px)`;
+  
+  joyVector.x = dx / maxRadius;
+  joyVector.y = dy / maxRadius;
+}
+
+function endJoy(e) {
+  if (!joyActive) return;
+  joyActive = false;
+  joystickStick.style.transition = 'transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+  joystickStick.style.transform = `translate(0px, 0px)`;
+  joyVector = { x: 0, y: 0 };
 }
 
 // =============================================================
@@ -217,15 +250,10 @@ class Player {
     if (keys['ArrowUp'] || keys['w'] || keys['W']) ay -= PLAYER_ACCEL;
     if (keys['ArrowDown'] || keys['s'] || keys['S']) ay += PLAYER_ACCEL;
 
-    // Touch movement
-    if (touchActive) {
-      const dx = touchX - this.x;
-      const dy = touchY - this.y;
-      const dist = Math.hypot(dx, dy);
-      if (dist > this.radius * 1.5) {
-        ax += (dx / dist) * PLAYER_ACCEL;
-        ay += (dy / dist) * PLAYER_ACCEL;
-      }
+    // Joystick movement
+    if (joyVector.x !== 0 || joyVector.y !== 0) {
+      ax += joyVector.x * PLAYER_ACCEL;
+      ay += joyVector.y * PLAYER_ACCEL;
     }
 
     this.vx += ax;

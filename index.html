@@ -29,13 +29,20 @@
   <!-- Canvas -->
   <canvas id="game-canvas"></canvas>
 
+  <!-- Virtual Joystick (Mobile Only) -->
+  <div id="joystick-zone">
+    <div id="joystick-base">
+      <div id="joystick-stick"></div>
+    </div>
+  </div>
+
   <!-- Start Screen Overlay -->
   <div id="start-screen" class="overlay">
     <div class="overlay-content">
       <h1>⚽ Football Game</h1>
       <p>Score more goals than the CPU in 60 seconds!</p>
       <div class="controls-info">
-        <span>🎮 <strong>WASD</strong> / <strong>Arrows</strong> to move <br/><br/> 👆 <strong>Touch & Drag</strong> on mobile</span>
+        <span>🎮 <strong>WASD</strong> / <strong>Arrows</strong> to move <br/><br/> 🕹️ <strong>Virtual Joystick</strong> on mobile</span>
       </div>
       <button id="start-btn">Start Game</button>
     </div>
