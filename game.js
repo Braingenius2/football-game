@@ -68,6 +68,24 @@ window.addEventListener('keydown', (e) => {
 });
 window.addEventListener('keyup', (e) => { keys[e.key] = false; });
 
+// Touch Controls
+let touchActive = false;
+let touchX = 0, touchY = 0;
+
+canvas.addEventListener('pointerdown', handlePointer);
+canvas.addEventListener('pointermove', (e) => { if (touchActive) handlePointer(e); });
+canvas.addEventListener('pointerup', () => touchActive = false);
+canvas.addEventListener('pointercancel', () => touchActive = false);
+
+function handlePointer(e) {
+  touchActive = true;
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  touchX = (e.clientX - rect.left) * scaleX;
+  touchY = (e.clientY - rect.top) * scaleY;
+}
+
 // =============================================================
 //  Sound — Web Audio API (no external files)
 // =============================================================
@@ -198,6 +216,17 @@ class Player {
     if (keys['ArrowRight'] || keys['d'] || keys['D']) ax += PLAYER_ACCEL;
     if (keys['ArrowUp'] || keys['w'] || keys['W']) ay -= PLAYER_ACCEL;
     if (keys['ArrowDown'] || keys['s'] || keys['S']) ay += PLAYER_ACCEL;
+
+    // Touch movement
+    if (touchActive) {
+      const dx = touchX - this.x;
+      const dy = touchY - this.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist > this.radius * 1.5) {
+        ax += (dx / dist) * PLAYER_ACCEL;
+        ay += (dy / dist) * PLAYER_ACCEL;
+      }
+    }
 
     this.vx += ax;
     this.vy += ay;
